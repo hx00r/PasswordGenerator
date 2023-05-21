@@ -7,6 +7,7 @@ const includeNumbers = ref(false);
 const includeSymbols = ref(false);
 const randPassword = ref("P4$5W0rD1");
 const disable_copy = ref(true);
+const empty_entry = ref(false);
 const pass_test = ref({
   weak: false,
   medium: false,
@@ -17,7 +18,6 @@ const genPassword = () => {
   const lowerCase = "abcdefghijklmnopqrstuvwxyz";
   const numbers = "0123456789";
   const symbols = "!@#$%^&*()_+~`|}{[]\:;?><,./-=";
-  // const charset = `${upperCase}${lowerCase}${numbers}${symbols}`;
 
   let password = "";
   let pass_chars = [];
@@ -34,70 +34,24 @@ const genPassword = () => {
     if (includeSymbols.value) {
       pass_chars.push(symbols[Math.floor(Math.random() * symbols.length)]);
     }
+    if (
+      !includeUpperCase.value &&
+      !includeLowerCase.value &&
+      !includeNumbers.value &&
+      !includeSymbols.value
+    ) {
+      empty_entry.value = true;
+      disable_copy.value = true;
+      randPassword.value = password;
+      break;
+    }
+    empty_entry.value = false;
   }
-  password = pass_chars.slice(0, currentRange.value).join("");
-  console.log(password);
-  console.log(password);
-  console.log(pass_chars);
-  // console.log(upperCase[Math.floor(Math.random() * upperCase.length)]);
-  // for (let index = 0; index < currentRange.value; index++) {
-  //   if (includeUpperCase.value) {
-  //     password += upperCase[Math.floor(Math.random() * upperCase.length)];
-  //     console.log(password);
-  //   }
-  //   if (includeLowerCase.value) {
-  //     password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
-  //     console.log(password);
-  //   }
-  //   if (includeNumbers.value) {
-  //     password += numbers[Math.floor(Math.random() * numbers.length)];
-  //     console.log(password);
-  //   }
-  //   if (includeSymbols.value) {
-  //     password += symbols[Math.floor(Math.random() * symbols.length)];
-  //     console.log(password);
-  //   }
-  //   if (
-  //     !includeUpperCase.value &&
-  //     !includeLowerCase.value &&
-  //     !includeNumbers.value &&
-  //     !includeSymbols.value
-  //   ) {
-  //     password = "SELECT ONE CHOICE";
-  //     disable_copy.value = true;
-  //     randPassword.value = password;
-  //   }
-  // }
-  // for (let i = 0; i < Number(currentRange.value); i++) {
-  //   if (includeUpperCase.value) {
-  //     password += upperCase[Math.floor(Math.random() * upperCase.length)];
-  //     console.log(password);
-  //   }
-  //   if (includeLowerCase.value) {
-  //     password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
-  //     console.log(password);
-  //   }
-  //   if (includeNumbers.value) {
-  //     password += numbers[Math.floor(Math.random() * numbers.length)];
-  //     console.log(password);
-  //   }
-  //   if (includeSymbols.value) {
-  //     password += symbols[Math.floor(Math.random() * symbols.length)];
-  //     console.log(password);
-  //   }
-  //   if (
-  //     !includeUpperCase.value &&
-  //     !includeLowerCase.value &&
-  //     !includeNumbers.value &&
-  //     !includeSymbols.value
-  //   ) {
-  //     password = "SELECT ONE CHOICE";
-  //     disable_copy.value = true;
-  //     randPassword.value = password;
-  //     return password;
-  //   }
-  // }
-  console.log(password);
+  if (empty_entry) {
+    password = "SELECT ONE CHOICE";
+  } else {
+    password = pass_chars.slice(0, currentRange.value).join("");
+  }
   disable_copy.value = false;
   randPassword.value = password;
   let strongPassword = new RegExp(
