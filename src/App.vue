@@ -8,11 +8,23 @@ const includeSymbols = ref(false);
 const randPassword = ref("P4$5W0rD1");
 const disable_copy = ref(true);
 const empty_entry = ref(false);
+const current_theme = ref("");
 const pass_test = ref({
   weak: false,
   medium: false,
   strong: false,
 });
+const themeToggle = () => {
+  if (localStorage.getItem("theme") == "dark") {
+    document.documentElement.classList.remove("dark");
+    localStorage.setItem("theme", "light");
+    current_theme.value = "light";
+  } else {
+    document.documentElement.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+    current_theme.value = "dark";
+  }
+};
 const genPassword = () => {
   const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const lowerCase = "abcdefghijklmnopqrstuvwxyz";
@@ -84,13 +96,49 @@ const copyPassword = () => {
 };
 onMounted(() => {
   disable_copy.value = true;
+  if (localStorage.getItem("theme") == "dark") {
+    current_theme.value = "dark";
+  } else {
+    current_theme.value = "light";
+  }
 });
 </script>
 
 <template>
   <div
-    class="app-container bg-main h-screen w-full text-white flex justify-center items-center"
+    class="app-container bg:main-light dark:bg-main h-screen w-full text-white flex justify-center items-center relative"
   >
+    <div class="theme-switcher-container absolute top-0 right-0 py-3 px-5">
+      <button
+        class="text-red-400 bg-gray-400 bg-opacity-5 rounded-full p-1"
+        @click="themeToggle()"
+      >
+        <svg
+          v-if="current_theme == 'dark'"
+          class="fill-orange-300"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="#fff"
+        >
+          <path
+            d="M6.995 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007-2.246-5.007-5.007-5.007S6.995 9.239 6.995 12zM11 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2H2zm17 0h3v2h-3zM5.637 19.778l-1.414-1.414 2.121-2.121 1.414 1.414zM16.242 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.344 7.759 4.223 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z"
+          ></path>
+        </svg>
+        <svg
+          v-else
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z"
+          ></path>
+        </svg>
+      </button>
+    </div>
     <div class="password-gen-container flex flex-col gap-10 w-[400px]">
       <div class="pass-gen-title text-gray-500 text-center text-2xl">
         Password Generator
