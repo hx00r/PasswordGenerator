@@ -7,7 +7,6 @@ const includeNumbers = ref(false);
 const includeSymbols = ref(false);
 const randPassword = ref("P4$5W0rD1");
 const disable_copy = ref(true);
-const empty_entry = ref(false);
 const current_theme = ref("");
 const pass_test = ref({
   weak: false,
@@ -26,46 +25,42 @@ const themeToggle = () => {
   }
 };
 const genPassword = () => {
-  const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const lowerCase = "abcdefghijklmnopqrstuvwxyz";
-  const numbers = "0123456789";
-  const symbols = "!@#$%^&*()_+~`|}{[]\:;?><,./-=";
+  const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+  const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numberChars = "0123456789";
+  const symbolChars = "!@#$%^&*()_+-=[]{}|;:,<.>/?~";
 
+  let chars = "";
+
+  if (includeLowerCase.value) {
+    chars += lowercaseChars;
+  }
+  if (includeUpperCase.value) {
+    chars += uppercaseChars;
+  }
+  if (includeNumbers.value) {
+    chars += numberChars;
+  }
+  if (includeSymbols.value) {
+    chars += symbolChars;
+  }
+  if (
+    !includeUpperCase.value &&
+    !includeLowerCase.value &&
+    !includeNumbers.value &&
+    !includeSymbols.value
+  ) {
+    chars += lowercaseChars;
+    chars += uppercaseChars;
+    chars += numberChars;
+    chars += symbolChars;
+  }
   let password = "";
-  let pass_chars = [];
-  while (pass_chars.length < currentRange.value) {
-    if (includeUpperCase.value) {
-      pass_chars.push(upperCase[Math.floor(Math.random() * upperCase.length)]);
-    }
-    if (includeLowerCase.value) {
-      pass_chars.push(lowerCase[Math.floor(Math.random() * lowerCase.length)]);
-    }
-    if (includeNumbers.value) {
-      pass_chars.push(numbers[Math.floor(Math.random() * numbers.length)]);
-    }
-    if (includeSymbols.value) {
-      pass_chars.push(symbols[Math.floor(Math.random() * symbols.length)]);
-    }
-    if (
-      !includeUpperCase.value &&
-      !includeLowerCase.value &&
-      !includeNumbers.value &&
-      !includeSymbols.value
-    ) {
-      empty_entry.value = true;
-      disable_copy.value = true;
-      randPassword.value = password;
-      break;
-    }
-    empty_entry.value = false;
+  for (let i = 0; i < currentRange.value; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    password += chars[randomIndex];
   }
-  if (empty_entry) {
-    password = "SELECT ONE CHOICE";
-  } else {
-    password = pass_chars.slice(0, currentRange.value).join("");
-  }
-  disable_copy.value = false;
-  randPassword.value = password;
+
   let strongPassword = new RegExp(
     "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})"
   );
@@ -76,19 +71,18 @@ const genPassword = () => {
     pass_test.value.strong = true;
     pass_test.value.weak = false;
     pass_test.value.medium = false;
-    console.log("strong password");
   } else if (mediumPassword.test(password)) {
-    console.log("medium password");
     pass_test.value.medium = true;
     pass_test.value.weak = false;
     pass_test.value.strong = false;
   } else {
-    console.log("weak password");
     pass_test.value.weak = true;
     pass_test.value.medium = false;
     pass_test.value.strong = false;
   }
 
+  randPassword.value = password;
+  disable_copy.value = false;
   return password;
 };
 const copyPassword = () => {
@@ -147,7 +141,7 @@ onMounted(() => {
         class="pass-gen-output flex justify-between items-center bg-seconday p-5"
       >
         <p
-          class="gened-pass text-2xl text-gray-600 whitespace-nowrap overflow-x-scroll"
+          class="gened-pass text-2xl text-gray-400 dark:text-gray-600 whitespace-nowrap overflow-x-scroll"
         >
           {{ randPassword }}
         </p>
