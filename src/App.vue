@@ -175,7 +175,7 @@ onMounted(() => {
               class="overflow-hidden h-4 w-full accent-light-green"
               type="range"
               min="5"
-              max="100"
+              max="255"
               step="1"
               v-model="currentRange"
             />
